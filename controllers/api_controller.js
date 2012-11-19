@@ -18,13 +18,13 @@ ApiController.prototype = {
         return true;
     },
 
-    before : function () { return true; },
+    before : false,
 
     sendError: function (error) {
         this._res.json({error: error});
     },
 
-    sendSuccess: function (error) {
+    sendSuccess: function () {
         this._res.json({success: true});
     },
 

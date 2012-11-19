@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 
 var PlaceSchema = new mongoose.Schema({
-    account_id: Number,
+    account_id: mongoose.Schema.Types.ObjectId,
     name: String,
     description: String,
     coord_lat: Number,
