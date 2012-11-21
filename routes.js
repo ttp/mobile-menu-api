@@ -14,8 +14,12 @@ var map = function (route) {
             next: next
         };
         var controller = new controllers[_action[0]](options);
-        if (controller.before !== false && controller.before()) {
-            controller[_action[1]]();
+        if (controller.before !== false) {
+            controller.before(function (err) {
+                if (!err) {
+                    controller[_action[1]]();
+                }
+            });
         } else {
             controller[_action[1]]();
         }

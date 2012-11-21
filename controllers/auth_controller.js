@@ -1,11 +1,12 @@
 module.exports = AuthController;
 
 var http = require('http'),
-    mongoose = require('mongoose'),
+    db = require('../db'),
     ApiController = require("./api_controller"),
     UserModel = require('../models/user_model'),
     AccountModel = require('../models/account_model'),
-    Seq = require('seq');
+    Seq = require('seq'),
+    hat = require('hat');
 
 function AuthController(options) {
     ApiController.call(this, options);
@@ -73,5 +74,15 @@ AuthController.prototype._createAccount = function (login, cb) {
 
 AuthController.prototype.initSession = function (user) {
     // TODO generate session token, insert session data to memcached
-    this._res.json(user);
+    var token = hat();
+    var expire_seconds = 1800; // 30 min
+    
+    db.memcached.set(token, {
+        user_id: user._id,
+        account_id: user.account_id
+    }, expire_seconds, function (err) {
+        if ( err ) console.error( err );
+    });
+
+    this._res.json({token: token});
 };

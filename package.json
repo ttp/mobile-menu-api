@@ -1,0 +1,14 @@
+{
+    'name': 'mobile-menu-api',
+    'dependencies': {
+        'restify': '*',
+        'memcached': '*',
+        'mongoose': '*',
+        'seq': '*',
+        'hat': '*'
+    },
+
+    'devDependencies' : {
+        'supervisor': '*'
+    }
+}
