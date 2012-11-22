@@ -7,7 +7,6 @@ var map = function (route) {
     var _action = route.split('#');
 
     return function (req, res, next) {
-        // console.log(req.params);
         var options = {
             req: req,
             res: res,
@@ -27,13 +26,13 @@ var map = function (route) {
 }
 
 exports.initRoutes = function (server) {
-    server.get('/api/auth/ulogin/:token', map('auth#ulogin'));
-    server.get('/api/auth/dev', map('auth#dev'));
-
     server.get('/api/place_types', map('place_types#list'));
-    
-    server.get('/api/places', map('places#list'));
-    server.get('/api/places/:id', map('places#get'));
-    server.post('/api/places', map('places#add'));
-    server.put('/api/places/:id', map('places#save'));
+
+    server.get('/api/me/auth/ulogin/:token', map('auth#ulogin'));
+    server.get('/api/me/auth/dev', map('auth#dev'));
+
+    server.get('/api/me/places', map('places#list'));
+    server.get('/api/me/places/:id', map('places#get'));
+    server.post('/api/me/places', map('places#add'));
+    server.put('/api/me/places/:id', map('places#save'));
 }

@@ -5,35 +5,14 @@ var PlaceModel = require('../models/place_model'),
     MenuModel = require('../models/menu_model'),
     GridModel = require('../models/grid_model'),
     SessionModel = require('../models/session_model'),
-    ApiController = require("./api_controller"),
+    AccountController = require("./account_controller"),
     Seq = require('seq');
 
-require("util").inherits(PlacesController, ApiController);
+require("util").inherits(PlacesController, AccountController);
 
 function PlacesController(options) {
-    ApiController.call(this, options);
+    AccountController.call(this, options);
 }
-
-PlacesController.prototype.before = function (cb) {
-    var self = this;
-    if (!this._req.params.hasOwnProperty('token')) {
-        this._res.sendError('unauthorized');
-    } else {
-        SessionModel.get(this._req.params['token'], function (err, data) {
-            if (err) {
-                self.sendError('unable_to_check_token');
-                this._next();
-            } else if (!data) {
-                self.sendError('token_expired');
-                this._next();
-            } else {
-                this._user_id = data['user_id'];
-                this._account_id = data['account_id'];
-                cb();
-            }
-        });
-    }
-};
 
 PlacesController.prototype.list = function () {
     var res = this._res;

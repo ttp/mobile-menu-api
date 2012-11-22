@@ -77,7 +77,7 @@ var Session = {
 
     renew : function (token, data) {
         data.timestamp = getTimestamp();
-        SessionModel.update({token: token},{ $set: { updated: timestamp } }).exec();
+        SessionModel.update({token: token},{ $set: { updated: data.timestamp } }).exec();
         db.memcached.set(token, data, EXPIRE_SECONDS, function () {});
     },
 
