@@ -18,16 +18,24 @@ function getTimestamp () {
 var Session = {
     set : function (token, data, cb) {
         data.timestamp = getTimestamp();
-
-        SessionModel.create({
-            token: token,
-            data: JSON.stringify(data),
-            updated: data.timestamp
-        });
-
-        db.memcached.set(token, data, EXPIRE_SECONDS, function (err) {
-            if ( err ) console.error( err );
-        });
+        Seq()
+            .par(function () {
+                SessionModel.create({
+                    token: token,
+                    data: JSON.stringify(data),
+                    updated: data.timestamp
+                }, this);
+            })
+            .par(function () {
+                db.memcached.set(token, data, EXPIRE_SECONDS, this);
+            })
+            .seq(function () {
+                cb();
+            })
+            .catch(function (err) {
+                console.error(err);
+                cb(err);
+            })
     },
 
     get : function (token, cb) {

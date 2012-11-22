@@ -5,6 +5,7 @@ var http = require('http'),
     ApiController = require("./api_controller"),
     UserModel = require('../models/user_model'),
     AccountModel = require('../models/account_model'),
+    SessionModel = require('../models/session_model'),
     Seq = require('seq'),
     hat = require('hat');
 
@@ -21,43 +22,52 @@ AuthController.prototype.ulogin = function () {
         path: '/token.php?token=' + token + '&host=localhost',
         method: 'GET'
     };
-
-    http.request(options, this._callback.bind(this)).end();
+    var callback = this._callback.bind(this);
+    http.request(options, function (response) {
+        var self = this;
+        var str = '';
+        response.on('data', function (chunk) {
+            str += chunk;
+        });
+        response.on('end', function () {
+            var data = JSON.parse(str);
+            callback(data);
+        });
+    }).end();
 };
 
-AuthController.prototype._callback = function (response) {
+AuthController.prototype._callback = function (data) {
     var self = this;
-    var str = '';
-    response.on('data', function (chunk) {
-        str += chunk;
-    });
-    response.on('end', function () {
-        var data = JSON.parse(str);
-
-        if (data['error']) {
-            self.sendError(data['error']);
-        } else {
-            var identity = data['identity'];
-            Seq()
-                .seq(function () {
-                    UserModel.findOne({login: identity}, this);
-                })
-                .seq(function (user) {
-                    if (user === null) {
-                        self._createAccount(data['identity'], this);
-                    } else {
-                        this(null, user);
-                    }
-                })
-                .seq(function (user) {
-                    self.initSession(user);
-                })
-                .catch(function (err) {
-                    self.sendError(err);
-                });
-        }
-    });
+    if (data['error']) {
+        this.sendError(data['error']);
+    } else {
+        var identity = data['identity'];
+        Seq()
+            .seq(function () {
+                UserModel.findOne({login: identity}, this);
+            })
+            .seq(function (user) {
+                if (user === null) {
+                    self._createAccount(data['identity'], this);
+                } else {
+                    this(null, user);
+                }
+            })
+            .seq(function (user) {
+                self.initSession(user);
+            })
+            .catch(function (err) {
+                self.sendError(err);
+            });
+    }
 };
+
+AuthController.prototype.dev = function () {
+    var data = {
+        identity: 'dev'
+    };
+    this._callback(data);
+}
 
 AuthController.prototype._createAccount = function (login, cb) {
     Seq()
@@ -75,14 +85,15 @@ AuthController.prototype._createAccount = function (login, cb) {
 AuthController.prototype.initSession = function (user) {
     // TODO generate session token, insert session data to memcached
     var token = hat();
-    var expire_seconds = 1800; // 30 min
-    
-    db.memcached.set(token, {
+    var self = this;
+    SessionModel.set(token, {
         user_id: user._id,
         account_id: user.account_id
-    }, expire_seconds, function (err) {
-        if ( err ) console.error( err );
+    }, function (err) {
+        if (err) {
+            self.sendError('session_start_error');
+        } else {
+            self._res.json({token: token});
+        }
     });
-
-    this._res.json({token: token});
 };

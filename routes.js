@@ -28,6 +28,7 @@ var map = function (route) {
 
 exports.initRoutes = function (server) {
     server.get('/api/auth/ulogin/:token', map('auth#ulogin'));
+    server.get('/api/auth/dev', map('auth#dev'));
 
     server.get('/api/place_types', map('place_types#list'));
     
