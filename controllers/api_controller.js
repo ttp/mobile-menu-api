@@ -5,8 +5,6 @@ function ApiController(options) {
     this._req = options.req;
     this._res = options.res;
     this._next = options.next;
-
-    this._account_id = 1;
 }
 
 ApiController.prototype = {
