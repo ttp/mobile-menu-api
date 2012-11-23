@@ -2,11 +2,11 @@ var mongoose = require('mongoose');
 
 var PlaceSchema = new mongoose.Schema({
     account_id: mongoose.Schema.Types.ObjectId,
-    name: String,
+    name: { type: String, required: true },
     description: String,
     coord_lat: Number,
     coord_lng: Number,
-    url_name: { type: String, unique: true },
+    url_name: { type: String, required: true },
     place_type_code: String,
     menu_id: mongoose.Schema.Types.ObjectId,
     qtree_int: Number,

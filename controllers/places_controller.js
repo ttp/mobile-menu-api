@@ -12,6 +12,8 @@ require("util").inherits(PlacesController, AccountController);
 
 function PlacesController(options) {
     AccountController.call(this, options);
+
+    this._fields = ['name', 'description', 'coord_lat', 'coord_lng', 'url_name', 'place_type_code'];
 }
 
 PlacesController.prototype.list = function () {
@@ -45,81 +47,67 @@ PlacesController.prototype.get = function () {
 };
 
 PlacesController.prototype.save = function () {
-
-};
-
-PlacesController.prototype.add = function () {
-    var self = this;
-    var params = this._req.params;
-    params['menu_id'] = '50a924f8bc67c790bac873a0';
-    var fields = ['name', 'description', 'coord_lat', 'coord_lng', 'url_name', 'place_type_code'];
-    var data = {};
-    fields.forEach(function (field) {
-        data[field] = params[field];
-    });
-    data.account_id = this._account_id;
+    var self = this,
+        placeRow,
+        menuRow,
+        params = this._req.params;
 
     Seq()
-        .seq(function () {
-            MenuModel.findById(params['menu_id'], this);
+        .seq(function () {// find or create new Place
+            if (params['id']) {
+                PlaceModel.findById(params['id'], this)
+            } else {
+                var place = new PlaceModel({
+                    account_id: self._account_id
+                });
+                this(null, place);
+            }
         })
-        .seq(function (menu) {
-            data['menu_id'] = menu._id;
-            PlaceModel.create(data, this)
+        .seq(function (place) { // Validate place account, fill out values
+            if (!place) {
+                return this('place_not_found');
+            }
+            if (place.account_id != self._account_id) {
+                return this('invalid_place');
+            }
+            self._fields.forEach(function (field) {
+                place[field] = params[field];
+            });
+            placeRow = place;
+            place.validate(this);
+        })
+        .seq(function () {// find or create menu
+            if (params.hasOwnProperty('menu_id') && params['menu_id'] != '0') {
+                MenuModel.findById(params['menu_id'], this);
+            } else {
+                MenuModel.create({
+                    name: data['name'] + ' Menu',
+                    account_id: self._account_id
+                }, this);
+            }
+        })
+        .seq(function (menu) {// validate menu, save place
+            if (!menu) {
+                return this('menu_not_found');
+            }
+            if (menu.account_id != self._account_id) {
+                return this('invalid_menu');
+            }
+            menuRow = menu;
+            
+            placerRow.menu_id = menu.id;
+            placeRow.save(this);
         })
         .seq(function (place) {
-            self._res.json({
+            var response = {
                 success: true,
                 row: place
-            });
+            };
+            if (params['menu'] == '0') {
+                response.menu = menuRow
+            }
+            self._res.json(response);
         }).catch(function (err) {
             self.sendError(err);
         });
-
-    // if params[:id] != ''
-    //   place = Place.find(params[:id])
-    // else
-    //   place = Place.new
-    //   place.account_id = @account_id
-    // end
-
-    // # Check permissions
-    // if params[:id] != '' && !place.has_access?(@account_id)
-    //   render :json => {:success => false, :error => "Incorrect account"} and return
-    // end
-    // if params[:menu_id] != '0'
-    //   menu = Menu.find(params[:menu_id])
-    //   if !menu.has_access?(@account_id)
-    //     render :json => {:success => false, :error => "Incorrect menu"} and return
-    //   end
-    // end
-    // # check permissions end
-
-    // place.name = params[:name]
-    // place.description = params[:description]
-    // place.coord_lat = params[:coord_lat]
-    // place.coord_lng = params[:coord_lng]
-    // place.url_name = params[:url_name]
-    // place.place_type_id = params[:place_type_id]
-
-    // if place.valid?
-    //   if params[:menu_id] == "0"
-    //     menu = Menu.create({
-    //       :account_id => @account_id,
-    //       :name => params[:name] + " " + t(:menu)
-    //     })
-    //     place.menu_id = menu.id
-    //   else
-    //     place.menu_id = menu.id
-    //   end
-
-    //   place.save
-    //   response = {:success => true}
-    //   if params[:menu_id] == "0"
-    //     response[:menu] = menu
-    //   end
-    //   render :json => response
-    // else
-    //   render :json => {:error => true, :messages => place.errors}
-    // end
 };
