@@ -15,13 +15,18 @@ function AccountController(options) {
 }
 
 AccountController.prototype.before = function (cb) {
-    if (!this._req.params.hasOwnProperty('token')) {
+    var token;
+    if (this._req.header('Auth-Token')) {
+        token = this._req.header('Auth-Token');
+    } else if (this._req.params.hasOwnProperty('token')) {
+        token = this._req.params['token'];
+    } else {
         this.sendError(ERROR_INVALID_TOKEN);
         cb(ERROR_INVALID_TOKEN);
     }
 
     var self = this;
-    SessionModel.get(this._req.params['token'], function (err, data) {
+    SessionModel.get(token, function (err, data) {
         if (err) {
             self.sendError(ERROR_VERIFY_TOKEN);
             cb(ERROR_VERIFY_TOKEN);
