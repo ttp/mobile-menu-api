@@ -31,8 +31,14 @@ exports.initRoutes = function (server) {
     server.get('/api/me/auth/ulogin/:token', map('auth#ulogin'));
     server.get('/api/me/auth/dev', map('auth#dev'));
 
+// Places
+    // Get
     server.get('/api/me/places', map('places#list'));
     server.get('/api/me/places/:id', map('places#get'));
+    // Create/Update
     server.post('/api/me/places', map('places#save'));
     server.put('/api/me/places/:id', map('places#save'));
+    // Delete
+    server.del('/api/me/places/:id', map('places#del'));
+    server.post('/api/me/places/delete', map('places#del'));
 }

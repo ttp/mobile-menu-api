@@ -24,7 +24,6 @@ AuthController.prototype.ulogin = function () {
     };
     var callback = this._callback.bind(this);
     http.request(options, function (response) {
-        var self = this;
         var str = '';
         response.on('data', function (chunk) {
             str += chunk;

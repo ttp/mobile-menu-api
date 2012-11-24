@@ -4,7 +4,6 @@ var PlaceModel = require('../models/place_model'),
     PlaceTypeModel = require('../models/place_type_model'),
     MenuModel = require('../models/menu_model'),
     GridModel = require('../models/grid_model'),
-    SessionModel = require('../models/session_model'),
     AccountController = require("./account_controller"),
     Seq = require('seq');
 
@@ -81,7 +80,7 @@ PlacesController.prototype.save = function () {
                 MenuModel.findById(params['menu_id'], this);
             } else {
                 MenuModel.create({
-                    name: data['name'] + ' Menu',
+                    name: placeRow.name + ' Menu',
                     account_id: self._account_id
                 }, this);
             }
@@ -95,7 +94,7 @@ PlacesController.prototype.save = function () {
             }
             menuRow = menu;
             
-            placerRow.menu_id = menu.id;
+            placeRow.menu_id = menu.id;
             placeRow.save(this);
         })
         .seq(function (place) {
@@ -111,3 +110,25 @@ PlacesController.prototype.save = function () {
             self.sendError(err);
         });
 };
+
+PlacesController.prototype.del = function () {
+    var self = this;
+    var ids = this._req.params['id'].split(',');
+    Seq(ids)
+        .parMap(function (id) {// find by id
+            PlaceModel.findById(id, this);
+        })
+        .parEach(function (place) {// validate account and remove
+            if (place && place.account_id == self._account_id) {
+                place.remove(this);
+            } else {
+                this();
+            };
+        })
+        .seq(function () { // send succes message
+            self.sendSuccess();
+        })
+        .catch(function (err) {
+            self.sendError(err);
+        });
+}
