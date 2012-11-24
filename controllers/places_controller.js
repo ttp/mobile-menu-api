@@ -70,7 +70,9 @@ PlacesController.prototype.save = function () {
                 return this('invalid_place');
             }
             self._fields.forEach(function (field) {
-                place[field] = params[field];
+                if (params.hasOwnProperty(field)) {
+                    place[field] = params[field];
+                }
             });
             placeRow = place;
             place.validate(this);

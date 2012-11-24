@@ -1,4 +1,5 @@
-var mongoose = require('mongoose');
+var mongoose = require('mongoose'),
+    QuadTree = require('../libs/quadtree');
 
 var PlaceSchema = new mongoose.Schema({
     account_id: mongoose.Schema.Types.ObjectId,
@@ -19,7 +20,12 @@ var PlaceSchema = new mongoose.Schema({
 });
 
 PlaceSchema.pre('save', function (next) {
-    this.qtree_int = 1;
+    if (this.coord_lat && this.coord_lng) {
+        var quad = QuadTree.latLngToQuad(this.coord_lat, this.coord_lng);
+        this.qtree_int = parseInt(quad, 4);
+    } else {
+        this.qtree_int = 0;
+    }
     next();
 });
 

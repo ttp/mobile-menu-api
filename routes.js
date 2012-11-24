@@ -2,6 +2,7 @@ var controllers = {};
 controllers['auth'] = require('./controllers/auth_controller');
 controllers['places'] = require('./controllers/places_controller');
 controllers['place_types'] = require('./controllers/place_types_controller');
+controllers['menus'] = require('./controllers/menus_controller');
 
 var map = function (route) {
     var _action = route.split('#');
@@ -41,4 +42,15 @@ exports.initRoutes = function (server) {
     // Delete
     server.del('/api/me/places/:id', map('places#del'));
     server.post('/api/me/places/delete', map('places#del'));
+
+// Menus
+    // Get
+    server.get('/api/me/menus', map('menus#list'));
+    server.get('/api/me/menus/:id', map('menus#get'));
+    // Create/Update
+    server.post('/api/me/menus', map('menus#save'));
+    server.put('/api/me/menus/:id', map('menus#save'));
+    // Delete
+    server.del('/api/me/menus/:id', map('menus#del'));
+    server.post('/api/me/menus/delete', map('menus#del'));
 }
