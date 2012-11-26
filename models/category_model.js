@@ -1,4 +1,12 @@
-var mongoose = require('mongoose');
+var mongoose = require('mongoose'),
+    MenuItemModel = require('./menu_item_model'),
+    ObjectId = mongoose.Schema.Types.ObjectId;
+
+var PriceTitleSchema = new mongoose.Schema({
+    title: String,
+    sort_order: Number
+});
+
 
 var CategorySchema = new mongoose.Schema({
     menu_id: mongoose.Schema.Types.ObjectId,
@@ -7,7 +15,7 @@ var CategorySchema = new mongoose.Schema({
     parents: [mongoose.Schema.Types.ObjectId],
     
     name: String,
-    price_titles: [String],
+    price_titles: [PriceTitleSchema],
 
     created_at: { type: Date, default: Date.now },
     updated_at: { type: Date, default: Date.now }
@@ -69,10 +77,37 @@ CategorySchema.methods.removeChildren = function (cb) {
         cb();
     });
 }
-CategorySchema.methods.setPriceTitles = function (titlesStr) {
-    var titles = titlesStr.split(',').map(function (title) { return title.trim(); });
-    this.set('price_titles', titles);
+CategorySchema.methods.setPriceTitles = function (titles) {
+    var sort_order = 0,
+        price_title;
+    for (var id in titles) {
+        var data = {title: titles[id], sort_order: sort_order};
+        if (id.search("new") !== -1) {
+            this.price_titles.push(data);
+        } else {
+            price_title = this.price_titles.id(id);
+            for (var field in data) {
+                price_title[field] = data[field];
+            }
+        }
+
+        ++sort_order;
+    }
 }
+CategorySchema.methods.removePriceTitles = function (title_ids) {
+    var self = this;
+    title_ids.forEach(function (id) {
+        // remove assigned prices
+        MenuItemModel.update({ menu_id: self.menu_id }, {
+            $pull: {
+                prices: {"price_title_id": ObjectId(id)}
+            }
+        });
+        // remove title
+        self.price_titles.id(id).remove();
+    });
+}
+
 CategorySchema.methods.updateChildrenParents = function () {
     var parents = this.parents ? this.parents.slice() : [];
     var id = this.id;

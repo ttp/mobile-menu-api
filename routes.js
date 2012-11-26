@@ -14,6 +14,7 @@ var map = function (route) {
             res: res,
             next: next
         };
+        console.log(req.params);
         var controller = new controllers[_action[0]](options);
         if (controller.before !== false) {
             controller.before(function (err) {

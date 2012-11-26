@@ -139,7 +139,8 @@ CategoriesController.prototype.save = function () {
         .seq(function (menu, category, parentCategory) { // fill out values and save
             if (!category) {
                 category = new CategoryModel({
-                    menu_id: menu.id
+                    menu_id: menu.id,
+                    price_titles: []
                 });
             }
             prev_parent_id = category.parent_id;
@@ -149,9 +150,11 @@ CategoriesController.prototype.save = function () {
                     category.set(field, params[field]);
                 }
             });
-            if (params.hasOwnProperty('price_titles')) {
-                category.setPriceTitles(params['price_titles']);
-            }
+            // set price titles
+            var titles = JSON.parse(params['price_titles']);
+            category.setPriceTitles(titles['price_titles']);
+            category.removePriceTitles(titles['removed_titles']);
+
             category.save(this);
         })
         .seq(function (category) {
