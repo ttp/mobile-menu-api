@@ -21,7 +21,7 @@ CategoriesController.prototype.tree = function () {
             MenuModel.findById(params['menu_id'], this);
         })
         .par(function () {
-            var category_id = params['node'];
+            var category_id = params['node'] || '0';
             if (category_id != '0') {
                 CategoryModel.findById(category_id, this);
             } else {
@@ -151,9 +151,11 @@ CategoriesController.prototype.save = function () {
                 }
             });
             // set price titles
-            var titles = JSON.parse(params['price_titles']);
-            category.setPriceTitles(titles['price_titles']);
-            category.removePriceTitles(titles['removed_titles']);
+            if (params['price_titles']) {
+                var titles = JSON.parse(params['price_titles']);
+                category.setPriceTitles(titles['price_titles']);
+                category.removePriceTitles(titles['removed_titles']);
+            }
 
             category.save(this);
         })
@@ -181,7 +183,7 @@ CategoriesController.prototype.del = function () {
             CategoryModel.findById(id, this);
         })
         .parEach(function (category) {// validate account and remove
-            var seq = this;
+            var parentSeq = this;
             Seq()
                 .seq(function () {
                     MenuModel.findById(category.menu_id, this);
@@ -190,14 +192,13 @@ CategoriesController.prototype.del = function () {
                     if (menu.account_id != self._account_id) {
                         return seq('invalid_category');
                     }
-                    category.removeChildren();
-
+                    category.removeChildren(this);
                 })
                 .seq(function () {
-                    seq();
+                    category.remove(parentSeq);
                 })
                 .catch(function (err) {
-                    self.sendError(err);
+                    parentSeq(err);
                 });
             
         })

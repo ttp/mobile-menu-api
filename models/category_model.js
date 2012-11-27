@@ -70,12 +70,7 @@ CategorySchema.methods.setParent = function (parentCategory) {
     }
 }
 CategorySchema.methods.removeChildren = function (cb) {
-    CategoryModel.CategoryModel.find({parents: {$in: this.id}}, function (rows) {
-        rows.forEach(function (row) {
-            row.remove();
-        });
-        cb();
-    });
+    CategoryModel.find({parents: {$in: [this.id]}}).remove(cb);
 }
 CategorySchema.methods.setPriceTitles = function (titles) {
     var sort_order = 0,
@@ -98,7 +93,7 @@ CategorySchema.methods.removePriceTitles = function (title_ids) {
     var self = this;
     title_ids.forEach(function (id) {
         // remove assigned prices
-        MenuItemModel.update({ menu_id: self.menu_id }, {
+        MenuItemModel.update({ category_id: self.id }, {
             $pull: {
                 prices: {"price_title_id": ObjectId(id)}
             }
