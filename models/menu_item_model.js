@@ -21,5 +21,33 @@ var MenuItemSchema = new mongoose.Schema({
     updated_at: { type: Date, default: Date.now }
 });
 
+MenuItemSchema.methods.setPrices = function (price_titles, prices) {
+    var priceDoc, price;
+    for (var title_id in prices) {
+        price = prices[title_id] != "" ? parseFloat(prices[title_id]) : 0;
+        console.log('Price: ' + price);
+
+        var title = price_titles.id(title_id);
+        if (!title) {
+            continue;
+        }
+
+        for (var i in this.prices) {
+            if (this.prices[i].price_title_id == title_id) {
+                priceDoc = this.prices[i];
+                break;
+            }
+        }
+        if (priceDoc) {
+            priceDoc.price = price;
+        } else {
+            this.prices.push({
+                price_title_id: title_id,
+                price: price
+            });
+        }
+    }
+}
+
 var MenuItemModel = mongoose.model('menu_item', MenuItemSchema);
 module.exports = MenuItemModel;

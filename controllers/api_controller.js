@@ -1,5 +1,4 @@
 function ApiController (options) {
-    console.log(this.constructor);
     this._options = options;
     this._req = options.req;
     this._res = options.res;

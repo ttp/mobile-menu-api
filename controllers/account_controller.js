@@ -7,7 +7,6 @@ var ERROR_INVALID_TOKEN = "invalid_token",
     ERROR_EXPIRED_TOKEN = "expired_token";
 
 function AccountController (options) {
-    console.log(this.constructor);
     AccountController.super_.call(this, options);
 }
 require("util").inherits(AccountController, ApiController);

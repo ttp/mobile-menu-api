@@ -3,8 +3,8 @@ controllers['auth'] = require('./controllers/auth_controller');
 controllers['places'] = require('./controllers/places_controller');
 controllers['place_types'] = require('./controllers/place_types_controller');
 controllers['menus'] = require('./controllers/menus_controller');
-controllers['menu_items'] = require('./controllers/menu_items_controller');
 controllers['categories'] = require('./controllers/categories_controller');
+controllers['menu_items'] = require('./controllers/menu_items_controller');
 
 var map = function (route) {
     var _action = route.split('#');
@@ -17,6 +17,7 @@ var map = function (route) {
         };
         console.log("Request:");
         console.log(req.params);
+        
         var controller = new controllers[_action[0]](options);
         if (controller.before !== false) {
             controller.before(function (err) {

@@ -4,7 +4,6 @@ var MenuModel = require('../models/menu_model'),
     Seq = require('seq');
 
 function CategoriesController (options) {
-    console.log(this.constructor);
     CategoriesController.super_.call(this, options);
 
     this._fields = ['name'];
@@ -13,17 +12,13 @@ require("util").inherits(CategoriesController, AccountController);
 module.exports = CategoriesController;
 
 CategoriesController.prototype.tree = function () {
-    var params = this._req.params
+    var params = this._req.params,
         self = this;
-    console.log('Category: before seq');
-    console.log(params);
     Seq()
         .par(function () {
-            console.log('Category: par1');
             MenuModel.findById(params['menu_id'], this);
         })
         .par(function () {
-            console.log('Category: par2');
             var category_id = params['node'] || '0';
             if (category_id != '0') {
                 CategoryModel.findById(category_id, this);
@@ -32,7 +27,6 @@ CategoriesController.prototype.tree = function () {
             }
         })
         .seq(function (menu, category) {
-            console.log('Category: seq3');
             if (!menu || menu.account_id != self._account_id) {
                 this('category_invalid_menu');
             }
@@ -43,14 +37,9 @@ CategoriesController.prototype.tree = function () {
             CategoryModel.getTree(menu.id, parent_id, this);
         })
         .seq(function (tree) {
-            console.log('Category: seq4');
-            console.log(self._res._headers);
-            console.log(self._res._body);
-            console.log(self._req.params);
             self._res.json(tree);
         })
         .catch(function (err) {
-            console.log('Category: error');
             self.sendError(err);
         });
 };
@@ -199,7 +188,7 @@ CategoriesController.prototype.del = function () {
                 })
                 .seq(function (menu) {
                     if (menu.account_id != self._account_id) {
-                        return seq('invalid_category');
+                        return parentSeq('invalid_category');
                     }
                     category.removeChildren(this);
                 })
