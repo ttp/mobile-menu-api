@@ -1,30 +1,44 @@
 var MenuModel = require('../models/menu_model'),
     CategoryModel = require('../models/category_model'),
+    MenuItemModel = require('../models/menu_item_model'),
+    GridModel = require('../models/grid_model'),
     AccountController = require("./account_controller"),
     Seq = require('seq');
 
-function CategoriesController (options) {
+function MenuItemsController (options) {
     console.log(this.constructor);
-    CategoriesController.super_.call(this, options);
+    MenuItemsController.super_.call(this, options);
 
     this._fields = ['name'];
 }
-require("util").inherits(CategoriesController, AccountController);
-module.exports = CategoriesController;
+require("util").inherits(MenuItemsController, AccountController);
+module.exports = MenuItemsController;
 
-CategoriesController.prototype.tree = function () {
+MenuItemsController.prototype.list = function () {
     var params = this._req.params
         self = this;
-    console.log('Category: before seq');
-    console.log(params);
+    console.log('Before invalid_menu');
+    self.sendError('menu_item_invalid_menu');
+    // if (!params['menu_id']) {
+    //     this.sendError('invalid_menu');
+    //     return this._next();
+    // }
+
+    /*var gridModel = new GridModel({
+        model: MenuItemModel,
+        conditions: {
+            "account_id": this._account_id,
+            "menu_id": params['menu_id']
+        },
+        sortable_cols: {"name": "name", "created_at": "id"},
+        params: params
+    });
     Seq()
         .par(function () {
-            console.log('Category: par1');
             MenuModel.findById(params['menu_id'], this);
         })
         .par(function () {
-            console.log('Category: par2');
-            var category_id = params['node'] || '0';
+            var category_id = params['category_id'] || '0';
             if (category_id != '0') {
                 CategoryModel.findById(category_id, this);
             } else {
@@ -32,30 +46,35 @@ CategoriesController.prototype.tree = function () {
             }
         })
         .seq(function (menu, category) {
-            console.log('Category: seq3');
             if (!menu || menu.account_id != self._account_id) {
-                this('category_invalid_menu');
+                return this('invalid_menu');
             }
             if (category && category.menu_id != menu.id) {
-                return this('category_invalid_category');
+                return this('invalid_category');
             }
-            var parent_id = category ? category.id : '0';
-            CategoryModel.getTree(menu.id, parent_id, this);
+            if (category) {
+                gridModel.setCondition("categories", {$in: [category.id]});
+            }
+            this();
         })
-        .seq(function (tree) {
-            console.log('Category: seq4');
-            console.log(self._res._headers);
-            console.log(self._res._body);
-            console.log(self._req.params);
-            self._res.json(tree);
+        .par(function () {
+            gridModel.count(this);
+        })
+        .par(function () {
+            gridModel.rows(this);
+        })
+        .seq(function (cnt, rows) {
+            self._res.json({
+                total: cnt,
+                rows: rows
+            });;
         })
         .catch(function (err) {
-            console.log('Category: error');
             self.sendError(err);
-        });
+        });*/
 };
 
-CategoriesController.prototype.get = function () {
+MenuItemsController.prototype.get = function () {
     var self = this,
         categoryRow;
     Seq()
@@ -102,7 +121,7 @@ CategoriesController.prototype.get = function () {
     
 };
 
-CategoriesController.prototype.save = function () {
+MenuItemsController.prototype.save = function () {
     var self = this,
         params = this._req.params,
         prev_parent_id;
@@ -184,7 +203,7 @@ CategoriesController.prototype.save = function () {
         });
 };
 
-CategoriesController.prototype.del = function () {
+MenuItemsController.prototype.del = function () {
     var self = this,
         ids = this._req.params['id'].split(',');
     Seq(ids)

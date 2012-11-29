@@ -9,6 +9,10 @@ function GridModel (options) {
 }
 
 GridModel.prototype = {
+    setCondition : function (field, condition) {
+        this._conditions[field] = condition;
+    },
+
     rows : function (cb) {
         var sortable_cols = this._options['sortable_cols'],
             params = this._options['params'],

@@ -3,6 +3,7 @@ controllers['auth'] = require('./controllers/auth_controller');
 controllers['places'] = require('./controllers/places_controller');
 controllers['place_types'] = require('./controllers/place_types_controller');
 controllers['menus'] = require('./controllers/menus_controller');
+controllers['menu_items'] = require('./controllers/menu_items_controller');
 controllers['categories'] = require('./controllers/categories_controller');
 
 var map = function (route) {
@@ -14,12 +15,15 @@ var map = function (route) {
             res: res,
             next: next
         };
+        console.log("Request:");
         console.log(req.params);
         var controller = new controllers[_action[0]](options);
         if (controller.before !== false) {
             controller.before(function (err) {
                 if (!err) {
                     controller[_action[1]]();
+                } else {
+                    next(err);
                 }
             });
         } else {
@@ -58,7 +62,7 @@ exports.initRoutes = function (server) {
 
 // Categories
     // Get
-    server.get('/api/me/categories/tree', map('categories#tree'));
+    server.get('/api/me/categories/as/tree', map('categories#tree'));
     server.get('/api/me/categories/:id', map('categories#get'));
     // Create/Update
     server.post('/api/me/categories', map('categories#save'));
@@ -66,4 +70,15 @@ exports.initRoutes = function (server) {
     // Delete
     server.del('/api/me/categories/:id', map('categories#del'));
     server.post('/api/me/categories/delete', map('categories#del'));
+
+// Menu Items
+    // Get
+    server.get('/api/me/menu_items', map('menu_items#list'));
+    server.get('/api/me/menu_items/:id', map('menu_items#get'));
+    // Create/Update
+    server.post('/api/me/menu_items', map('menu_items#save'));
+    server.put('/api/me/menu_items/:id', map('menu_items#save'));
+    // Delete
+    server.del('/api/me/menu_items/:id', map('menu_items#del'));
+    server.post('/api/me/menu_items/delete', map('menu_items#del'));
 }

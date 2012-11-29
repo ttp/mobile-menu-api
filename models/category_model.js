@@ -41,7 +41,7 @@ function getFlattenTree(menu_id, cb) {
             }
             tree[parent_id].push(row.toJSON());
         });
-        cb(null, tree);
+        cb(err, tree);
     });
 }
 

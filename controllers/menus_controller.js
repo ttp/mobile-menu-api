@@ -1,17 +1,15 @@
-module.exports = MenusController;
-
 var MenuModel = require('../models/menu_model'),
     GridModel = require('../models/grid_model'),
     AccountController = require("./account_controller"),
     Seq = require('seq');
 
-require("util").inherits(MenusController, AccountController);
-
 function MenusController(options) {
-    AccountController.call(this, options);
+    MenusController.super_.call(this, options);
 
     this._fields = ['name'];
 }
+require("util").inherits(MenusController, AccountController);
+module.exports = MenusController;
 
 MenusController.prototype.list = function () {
     var res = this._res;

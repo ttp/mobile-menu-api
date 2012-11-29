@@ -1,18 +1,17 @@
-module.exports = AccountController;
-
 var ApiController = require("./api_controller"),
     Seq = require('seq'),
     SessionModel = require('../models/session_model');
-
 
 var ERROR_INVALID_TOKEN = "invalid_token",
     ERROR_VERIFY_TOKEN = "verify_token_error",
     ERROR_EXPIRED_TOKEN = "expired_token";
 
-require("util").inherits(AccountController, ApiController);
-function AccountController(options) {
-    ApiController.call(this, options);
+function AccountController (options) {
+    console.log(this.constructor);
+    AccountController.super_.call(this, options);
 }
+require("util").inherits(AccountController, ApiController);
+module.exports = AccountController;
 
 AccountController.prototype.before = function (cb) {
     var token;
