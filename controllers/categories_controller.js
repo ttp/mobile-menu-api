@@ -159,7 +159,6 @@ CategoriesController.prototype.save = function () {
         })
         .seq(function (category) {
             if (prev_parent_id != category.parent_id) {
-                console.log('updateing children categories');
                 category.updateChildrenParents();
             }
             
@@ -190,7 +189,13 @@ CategoriesController.prototype.del = function () {
                     if (menu.account_id != self._account_id) {
                         return parentSeq('invalid_category');
                     }
+                    this();
+                })
+                .par(function () {
                     category.removeChildren(this);
+                })
+                .par(function () {
+                    category.removeMenuItems(this);
                 })
                 .seq(function () {
                     category.remove(parentSeq);

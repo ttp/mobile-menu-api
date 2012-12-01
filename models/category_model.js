@@ -72,6 +72,9 @@ CategorySchema.methods.setParent = function (parentCategory) {
 CategorySchema.methods.removeChildren = function (cb) {
     CategoryModel.find({parents: {$in: [this.id]}}).remove(cb);
 }
+CategorySchema.methods.removeMenuItems = function (cb) {
+    MenuItemModel.find({categories: {$in: [this.id]}}).remove(cb);
+}
 CategorySchema.methods.setPriceTitles = function (titles) {
     var sort_order = 0,
         price_title;
@@ -110,10 +113,20 @@ CategorySchema.methods.updateChildrenParents = function () {
     CategoryModel.find({parents: {$in: [this.id]}}, function (err, rows) {
         if (rows) {
             rows.forEach(function (row) {
-                var new_parents = [];
-                new_parents.push.apply(new_parents, parents);
-                new_parents.push.apply(new_parents, row.parents.slice(row.parents.indexOf(id)));
+                if (row.id == id) return;
+                var new_parents = parents.slice();
+                new_parents = new_parents.concat(row.parents.slice(row.parents.indexOf(id)));
                 row.parents = new_parents;
+                row.save();
+            });
+        }
+    });
+    MenuItemModel.find({categories: {$in: [this.id]}}, function (err, rows) {
+        if (rows) {
+            rows.forEach(function (row) {
+                var new_parents = parents.slice();
+                new_parents = new_parents.concat(row.categories.slice(row.categories.indexOf(id)));
+                row.categories = new_parents;
                 row.save();
             });
         }
