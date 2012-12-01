@@ -93,12 +93,11 @@ QuadTree.encode = function(x, y, z){
  *  @return Quadtree key string
  *  also adds '.quad' property to the poor LatLng instance
  */
-QuadTree.latLngToQuad = function(lat, lng){
-  var zl = 30;
+QuadTree.latLngToQuad = function(lat, lng, len) {
   var pnt = QuadTree.mercator.fromLatLngToPoint(lat, lng);
-  var tiX = Math.floor(pnt.x * Math.pow(2, zl) / QuadTree.tileSize);
-  var tiY = Math.floor(pnt.y * Math.pow(2, zl) / QuadTree.tileSize);
-  return QuadTree.encode(tiX, tiY, zl);
+  var tiX = Math.floor(pnt.x * Math.pow(2, len) / QuadTree.tileSize);
+  var tiY = Math.floor(pnt.y * Math.pow(2, len) / QuadTree.tileSize);
+  return QuadTree.encode(tiX, tiY, len);
 }
 
 

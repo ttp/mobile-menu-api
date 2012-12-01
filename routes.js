@@ -1,6 +1,8 @@
 var controllers = {};
 controllers['auth'] = require('./controllers/auth_controller');
 controllers['place_types'] = require('./controllers/place_types_controller');
+controllers['places'] = require('./controllers/places_controller');
+controllers['map'] = require('./controllers/map_controller');
 
 // Account
 controllers['account_places'] = require('./controllers/account/places_controller');
@@ -37,10 +39,15 @@ var map = function (route) {
 
 exports.initRoutes = function (server) {
     server.get('/api/place_types', map('place_types#list'));
+    server.get('/api/places/:id/all', map('places#all'));
+    
+    server.get('/api/map/quad/:quad_id', map('map#quad'));
 
+/**
+* Account routes
+**/
     server.get('/api/me/auth/ulogin/:token', map('auth#ulogin'));
     server.get('/api/me/auth/dev', map('auth#dev'));
-
 // Places
     // Get
     server.get('/api/me/places', map('account_places#list'));
