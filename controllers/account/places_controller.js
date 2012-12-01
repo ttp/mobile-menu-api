@@ -1,21 +1,19 @@
-module.exports = PlacesController;
-
-var PlaceModel = require('../models/place_model'),
-    PlaceTypeModel = require('../models/place_type_model'),
-    MenuModel = require('../models/menu_model'),
-    GridModel = require('../models/grid_model'),
+var PlaceModel = require('../../models/place_model'),
+    PlaceTypeModel = require('../../models/place_type_model'),
+    MenuModel = require('../../models/menu_model'),
+    GridModel = require('../../models/grid_model'),
     AccountController = require("./account_controller"),
     Seq = require('seq');
 
-require("util").inherits(PlacesController, AccountController);
-
-function PlacesController(options) {
-    AccountController.call(this, options);
+function AccountPlacesController(options) {
+    AccountPlacesController.super_.call(this, options);
 
     this._fields = ['name', 'description', 'coord_lat', 'coord_lng', 'url_name', 'place_type_code'];
 }
+require("util").inherits(AccountPlacesController, AccountController);
+module.exports = AccountPlacesController;
 
-PlacesController.prototype.list = function () {
+AccountPlacesController.prototype.list = function () {
     var res = this._res;
 
     var gridModel = new GridModel({
@@ -41,11 +39,11 @@ PlacesController.prototype.list = function () {
         });
 };
 
-PlacesController.prototype.get = function () {
+AccountPlacesController.prototype.get = function () {
     PlaceModel.findOne({'_id': this._req.params['id']}, null, null, this._getCallback.bind(this));
 };
 
-PlacesController.prototype.save = function () {
+AccountPlacesController.prototype.save = function () {
     var self = this,
         placeRow,
         menuRow,
@@ -113,7 +111,7 @@ PlacesController.prototype.save = function () {
         });
 };
 
-PlacesController.prototype.del = function () {
+AccountPlacesController.prototype.del = function () {
     var self = this;
     var ids = this._req.params['id'].split(',');
     Seq(ids)

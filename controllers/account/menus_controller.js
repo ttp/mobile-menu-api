@@ -1,17 +1,17 @@
-var MenuModel = require('../models/menu_model'),
-    GridModel = require('../models/grid_model'),
+var MenuModel = require('../../models/menu_model'),
+    GridModel = require('../../models/grid_model'),
     AccountController = require("./account_controller"),
     Seq = require('seq');
 
-function MenusController(options) {
-    MenusController.super_.call(this, options);
+function AccountMenusController(options) {
+    AccountMenusController.super_.call(this, options);
 
     this._fields = ['name'];
 }
-require("util").inherits(MenusController, AccountController);
-module.exports = MenusController;
+require("util").inherits(AccountMenusController, AccountController);
+module.exports = AccountMenusController;
 
-MenusController.prototype.list = function () {
+AccountMenusController.prototype.list = function () {
     var res = this._res;
 
     var gridModel = new GridModel({
@@ -37,11 +37,11 @@ MenusController.prototype.list = function () {
         });
 };
 
-MenusController.prototype.get = function () {
+AccountMenusController.prototype.get = function () {
     MenuModel.findOne({'_id': this._req.params['id']}, null, null, this._getCallback.bind(this));
 };
 
-MenusController.prototype.save = function () {
+AccountMenusController.prototype.save = function () {
     var self = this,
         params = this._req.params;
 
@@ -80,7 +80,7 @@ MenusController.prototype.save = function () {
         });
 };
 
-MenusController.prototype.del = function () {
+AccountMenusController.prototype.del = function () {
     var self = this,
         ids = this._req.params['id'].split(',');
     Seq(ids)

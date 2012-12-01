@@ -1,17 +1,17 @@
-var MenuModel = require('../models/menu_model'),
-    CategoryModel = require('../models/category_model'),
+var MenuModel = require('../../models/menu_model'),
+    CategoryModel = require('../../models/category_model'),
     AccountController = require("./account_controller"),
     Seq = require('seq');
 
-function CategoriesController (options) {
-    CategoriesController.super_.call(this, options);
+function AccountCategoriesController (options) {
+    AccountCategoriesController.super_.call(this, options);
 
     this._fields = ['name'];
 }
-require("util").inherits(CategoriesController, AccountController);
-module.exports = CategoriesController;
+require("util").inherits(AccountCategoriesController, AccountController);
+module.exports = AccountCategoriesController;
 
-CategoriesController.prototype.tree = function () {
+AccountCategoriesController.prototype.tree = function () {
     var params = this._req.params,
         self = this;
     Seq()
@@ -44,7 +44,7 @@ CategoriesController.prototype.tree = function () {
         });
 };
 
-CategoriesController.prototype.get = function () {
+AccountCategoriesController.prototype.get = function () {
     var self = this,
         categoryRow;
     Seq()
@@ -91,7 +91,7 @@ CategoriesController.prototype.get = function () {
     
 };
 
-CategoriesController.prototype.save = function () {
+AccountCategoriesController.prototype.save = function () {
     var self = this,
         params = this._req.params,
         prev_parent_id;
@@ -172,7 +172,7 @@ CategoriesController.prototype.save = function () {
         });
 };
 
-CategoriesController.prototype.del = function () {
+AccountCategoriesController.prototype.del = function () {
     var self = this,
         ids = this._req.params['id'].split(',');
     Seq(ids)

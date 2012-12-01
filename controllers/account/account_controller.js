@@ -1,6 +1,6 @@
-var ApiController = require("./api_controller"),
+var ApiController = require("../api_controller"),
     Seq = require('seq'),
-    SessionModel = require('../models/session_model');
+    SessionModel = require('../../models/session_model');
 
 var ERROR_INVALID_TOKEN = "invalid_token",
     ERROR_VERIFY_TOKEN = "verify_token_error",

@@ -1,19 +1,19 @@
-var MenuModel = require('../models/menu_model'),
-    CategoryModel = require('../models/category_model'),
-    MenuItemModel = require('../models/menu_item_model'),
-    GridModel = require('../models/grid_model'),
+var MenuModel = require('../../models/menu_model'),
+    CategoryModel = require('../../models/category_model'),
+    MenuItemModel = require('../../models/menu_item_model'),
+    GridModel = require('../../models/grid_model'),
     AccountController = require("./account_controller"),
     Seq = require('seq');
 
-function MenuItemsController (options) {
-    MenuItemsController.super_.call(this, options);
+function AccountMenuItemsController (options) {
+    AccountMenuItemsController.super_.call(this, options);
 
     this._fields = ['name', 'description', 'weight'];
 }
-require("util").inherits(MenuItemsController, AccountController);
-module.exports = MenuItemsController;
+require("util").inherits(AccountMenuItemsController, AccountController);
+module.exports = AccountMenuItemsController;
 
-MenuItemsController.prototype.list = function () {
+AccountMenuItemsController.prototype.list = function () {
     var params = this._req.params,
         self = this;
     if (!params['menu_id']) {
@@ -70,7 +70,7 @@ MenuItemsController.prototype.list = function () {
         });
 };
 
-MenuItemsController.prototype.get = function () {
+AccountMenuItemsController.prototype.get = function () {
     var self = this;
     Seq()
         .seq(function () {
@@ -110,7 +110,7 @@ MenuItemsController.prototype.get = function () {
     
 };
 
-MenuItemsController.prototype.save = function () {
+AccountMenuItemsController.prototype.save = function () {
     var self = this,
         params = this._req.params,
         prev_parent_id;
@@ -168,7 +168,7 @@ MenuItemsController.prototype.save = function () {
         });
 };
 
-MenuItemsController.prototype.del = function () {
+AccountMenuItemsController.prototype.del = function () {
     var self = this,
         ids = this._req.params['id'].split(',');
     Seq(ids)

@@ -1,10 +1,12 @@
 var controllers = {};
 controllers['auth'] = require('./controllers/auth_controller');
-controllers['places'] = require('./controllers/places_controller');
 controllers['place_types'] = require('./controllers/place_types_controller');
-controllers['menus'] = require('./controllers/menus_controller');
-controllers['categories'] = require('./controllers/categories_controller');
-controllers['menu_items'] = require('./controllers/menu_items_controller');
+
+// Account
+controllers['account_places'] = require('./controllers/account/places_controller');
+controllers['account_menus'] = require('./controllers/account/menus_controller');
+controllers['account_categories'] = require('./controllers/account/categories_controller');
+controllers['account_menu_items'] = require('./controllers/account/menu_items_controller');
 
 var map = function (route) {
     var _action = route.split('#');
@@ -41,45 +43,45 @@ exports.initRoutes = function (server) {
 
 // Places
     // Get
-    server.get('/api/me/places', map('places#list'));
-    server.get('/api/me/places/:id', map('places#get'));
+    server.get('/api/me/places', map('account_places#list'));
+    server.get('/api/me/places/:id', map('account_places#get'));
     // Create/Update
-    server.post('/api/me/places', map('places#save'));
-    server.put('/api/me/places/:id', map('places#save'));
+    server.post('/api/me/places', map('account_places#save'));
+    server.put('/api/me/places/:id', map('account_places#save'));
     // Delete
-    server.del('/api/me/places/:id', map('places#del'));
-    server.post('/api/me/places/delete', map('places#del'));
+    server.del('/api/me/places/:id', map('account_places#del'));
+    server.post('/api/me/places/delete', map('account_places#del'));
 
 // Menus
     // Get
-    server.get('/api/me/menus', map('menus#list'));
-    server.get('/api/me/menus/:id', map('menus#get'));
+    server.get('/api/me/menus', map('account_menus#list'));
+    server.get('/api/me/menus/:id', map('account_menus#get'));
     // Create/Update
-    server.post('/api/me/menus', map('menus#save'));
-    server.put('/api/me/menus/:id', map('menus#save'));
+    server.post('/api/me/menus', map('account_menus#save'));
+    server.put('/api/me/menus/:id', map('account_menus#save'));
     // Delete
-    server.del('/api/me/menus/:id', map('menus#del'));
-    server.post('/api/me/menus/delete', map('menus#del'));
+    server.del('/api/me/menus/:id', map('account_menus#del'));
+    server.post('/api/me/menus/delete', map('account_menus#del'));
 
 // Categories
     // Get
-    server.get('/api/me/categories/as/tree', map('categories#tree'));
-    server.get('/api/me/categories/:id', map('categories#get'));
+    server.get('/api/me/categories/as/tree', map('account_categories#tree'));
+    server.get('/api/me/categories/:id', map('account_categories#get'));
     // Create/Update
-    server.post('/api/me/categories', map('categories#save'));
-    server.put('/api/me/categories/:id', map('categories#save'));
+    server.post('/api/me/categories', map('account_categories#save'));
+    server.put('/api/me/categories/:id', map('account_categories#save'));
     // Delete
-    server.del('/api/me/categories/:id', map('categories#del'));
-    server.post('/api/me/categories/delete', map('categories#del'));
+    server.del('/api/me/categories/:id', map('account_categories#del'));
+    server.post('/api/me/categories/delete', map('account_categories#del'));
 
 // Menu Items
     // Get
-    server.get('/api/me/menu_items', map('menu_items#list'));
-    server.get('/api/me/menu_items/:id', map('menu_items#get'));
+    server.get('/api/me/menu_items', map('account_menu_items#list'));
+    server.get('/api/me/menu_items/:id', map('account_menu_items#get'));
     // Create/Update
-    server.post('/api/me/menu_items', map('menu_items#save'));
-    server.put('/api/me/menu_items/:id', map('menu_items#save'));
+    server.post('/api/me/menu_items', map('account_menu_items#save'));
+    server.put('/api/me/menu_items/:id', map('account_menu_items#save'));
     // Delete
-    server.del('/api/me/menu_items/:id', map('menu_items#del'));
-    server.post('/api/me/menu_items/delete', map('menu_items#del'));
+    server.del('/api/me/menu_items/:id', map('account_menu_items#del'));
+    server.post('/api/me/menu_items/delete', map('account_menu_items#del'));
 }
