@@ -16,7 +16,7 @@ GridModel.prototype = {
     rows : function (cb) {
         var sortable_cols = this._options['sortable_cols'],
             params = this._options['params'],
-            directions = {'ASC': -1, 'DESC': 1};
+            directions = {'ASC': "", 'DESC': "-"};
         
         var select = this._model.find(this._conditions);
 
@@ -28,17 +28,23 @@ GridModel.prototype = {
         select.limit(limit).skip(offset);
 
         /* sorting */
-        if (params.hasOwnProperty('sort') && sortable_cols.hasOwnProperty(params['sort'])) {
+        if (params.hasOwnProperty('sort')) {
             var sort = JSON.parse(params['sort']);
-            var sort_field = sortable_cols[sort['property']];
-            var sort_direction = 'asc';
+            if (sort.constructor == Array) {
+                sort = sort[0];
+            }
+
+            var sort_field = "",
+                sort_direction = "";
+            if (sortable_cols.hasOwnProperty(sort['property'])) {
+                sort_field = sortable_cols[sort['property']];
+            }
             if (sort['direction'] && directions.hasOwnProperty(sort['direction'])) {
                 sort_direction = directions[sort['direction']];
             }
-
-            var sort_fields = {};
-            sort_fields[sort_field] = sort_direction
-            select.sort(order, 'asc');
+            if (sort_field != "") {
+                select.sort(sort_direction + sort_field);
+            }
         }
         select.exec(cb);
     },

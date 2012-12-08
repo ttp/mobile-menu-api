@@ -26,7 +26,7 @@ AccountMenuItemsController.prototype.list = function () {
         conditions: {
             "menu_id": params['menu_id']
         },
-        sortable_cols: {"name": "name", "created_at": "id"},
+        sortable_cols: {"name": "name", "created_at": "_id"},
         params: params
     });
     Seq()

@@ -19,7 +19,7 @@ AccountPlacesController.prototype.list = function () {
     var gridModel = new GridModel({
         model: PlaceModel,
         conditions: {"account_id": this._account_id},
-        sortable_cols: {"name": "name", "created_at": "id"},
+        sortable_cols: {"name": "name", "created_at": "_id"},
         params: this._req.params
     });
     Seq()
