@@ -6,7 +6,6 @@ var QTREE_LEN = 16;
 var PlaceSchema = new mongoose.Schema({
     account_id: mongoose.Schema.Types.ObjectId,
     name: { type: String, required: true },
-    url_name: { type: String, required: true },
     description: String,
     
     place_type_code: String,

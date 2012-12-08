@@ -8,7 +8,7 @@ var PlaceModel = require('../../models/place_model'),
 function AccountPlacesController(options) {
     AccountPlacesController.super_.call(this, options);
 
-    this._fields = ['name', 'description', 'coord_lat', 'coord_lng', 'url_name', 'place_type_code'];
+    this._fields = ['name', 'description', 'coord_lat', 'coord_lng', 'place_type_code'];
 }
 require("util").inherits(AccountPlacesController, AccountController);
 module.exports = AccountPlacesController;
