@@ -9,6 +9,7 @@ var PlaceSchema = new mongoose.Schema({
     description: String,
     
     place_type_code: String,
+    show_on_map: {type: Boolean, default: false},
     menu_id: mongoose.Schema.Types.ObjectId,
 
     coord_lat: Number,
@@ -48,6 +49,7 @@ PlaceSchema.static('findByQuad', function (quad, cb) {
         to_int = parseInt(to, 4);
     this.find({
         qtree_int: {$gte: from_int, $lte: to_int},
+        show_on_map: true,
         verified: false
     }, cb);
 });
