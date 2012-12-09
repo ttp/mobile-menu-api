@@ -92,7 +92,7 @@ AuthController.prototype.initSession = function (user) {
         if (err) {
             self.sendError('session_start_error');
         } else {
-            self._res.json({token: token});
+            self._res.json({token: token, user: user});
         }
     });
 };
