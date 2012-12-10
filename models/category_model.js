@@ -20,6 +20,10 @@ var CategorySchema = new mongoose.Schema({
     created_at: { type: Date, default: Date.now },
     updated_at: { type: Date, default: Date.now }
 });
+CategorySchema.set('autoIndex', false);
+CategorySchema.index({ menu_id: 1 });
+CategorySchema.index({ parent_id: 1 });
+CategorySchema.index({ parents: 1 });
 
 // Static methods
 CategorySchema.static('getTree', getTree);

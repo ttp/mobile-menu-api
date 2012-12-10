@@ -7,5 +7,9 @@ var MenuSchema = new mongoose.Schema({
     created_at: { type: Date, default: Date.now },
     updated_at: { type: Date, default: Date.now }
 });
+MenuSchema.set('autoIndex', false);
+MenuSchema.index({ account_id: 1 });
+MenuSchema.index({ account_id: 1, name: 1 });
+MenuSchema.index({ account_id: 1, name: -1 });
 
 module.exports = mongoose.model('menu', MenuSchema);

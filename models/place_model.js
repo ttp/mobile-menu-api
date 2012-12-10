@@ -20,6 +20,9 @@ var PlaceSchema = new mongoose.Schema({
     created_at: { type: Date, default: Date.now },
     updated_at: { type: Date, default: Date.now }
 });
+PlaceSchema.set('autoIndex', false);
+PlaceSchema.index({ account_id: 1 });
+PlaceSchema.index({ qtree_int: 1 });
 
 PlaceSchema.pre('save', function (next) {
     if (this.coord_lat && this.coord_lng) {
@@ -47,10 +50,15 @@ PlaceSchema.static('findByQuad', function (quad, cb) {
     
     var from_int = parseInt(from, 4),
         to_int = parseInt(to, 4);
+    console.log({
+        qtree_int: {$gte: from_int, $lte: to_int},
+        show_on_map: true,
+        verified: true
+    });
     this.find({
         qtree_int: {$gte: from_int, $lte: to_int},
         show_on_map: true,
-        verified: false
+        verified: true
     }, cb);
 });
 

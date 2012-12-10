@@ -6,6 +6,9 @@ var SessionSchema = new db.mongoose.Schema({
     data: String,
     updated: Number
 });
+SessionSchema.set('autoIndex', false);
+SessionSchema.index({ token: 1 });
+
 var SessionModel = db.mongoose.model('session', SessionSchema);
 
 var EXPIRE_SECONDS = 3600, // 1 hour
@@ -16,6 +19,8 @@ function getTimestamp () {
 }
 
 var Session = {
+    model : SessionModel,
+    
     set : function (token, data, cb) {
         data.timestamp = getTimestamp();
         Seq()

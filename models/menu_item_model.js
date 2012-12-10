@@ -20,6 +20,14 @@ var MenuItemSchema = new mongoose.Schema({
     created_at: { type: Date, default: Date.now },
     updated_at: { type: Date, default: Date.now }
 });
+MenuItemSchema.set('autoIndex', false);
+MenuItemSchema.index({ menu_id: 1 });
+MenuItemSchema.index({ menu_id: 1, category_id: 1 });
+MenuItemSchema.index({ category_id: 1 });
+MenuItemSchema.index({ categories: 1 });
+MenuItemSchema.index({ menu_id: 1, name: 1 });
+MenuItemSchema.index({ menu_id: 1, name: -1 });
+
 
 MenuItemSchema.methods.setPrices = function (price_titles, prices) {
     var priceDoc, price;

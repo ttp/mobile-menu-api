@@ -10,7 +10,7 @@
     },
 
     "devDependencies" : {
-        "supervisor": "*"
+        "supervisor": "*",
         "forever": "*"
     }
 }
