@@ -36,10 +36,14 @@ ExportCsvService.prototype = {
 
             var prices = _.groupBy(item.prices, "price_title_id");
             _.each(price_titles, function (price_title, i) {
-                row["price" + (i > 0 ? i + 1 : "")] = prices[price_title._id] ? prices[price_title._id][0].price : "";
-            });
+                row[this._getPriceKey(i)] = prices[price_title._id] ? prices[price_title._id][0].price : "";
+            }, this);
             this._response.push(row);
         }, this);
+    },
+
+    _getPriceKey : function (i) {
+        return "price" + (i > 0 ? i + 1 : "");
     },
 
     _addCategories: function (parent_id) {
@@ -57,8 +61,8 @@ ExportCsvService.prototype = {
             if (category.price_titles) {
                 price_titles = _.sortBy(category.price_titles, "sort_order");
                 _.each(price_titles, function (title, i) {
-                    row["price" + (i > 0 ? i + 1 : "")] = title.title;
-                });
+                    row[this._getPriceKey(i)] = title.title;
+                }, this);
             }
             this._response.push(row);
 
