@@ -1,6 +1,7 @@
 var MenuModel = require('../../models/menu_model'),
     GridModel = require('../../models/grid_model'),
     CategoryModel = require('../../models/category_model'),
+    MenuItemModel = require('../../models/menu_item_model'),
     ExportCsv = require('../../models/export_csv'),
     AccountController = require("./account_controller"),
     Seq = require('seq');
@@ -104,29 +105,37 @@ AccountMenusController.prototype.del = function () {
         });
 };
 
-AccountMenusController.prototype.before = function (cb) {
-    this._user_id = "50cc682c16487d6c0b000004";
-    this._account_id = "50cc682c16487d6c0b000003";
-    cb();
-};
+// AccountMenusController.prototype.before = function (cb) {
+//     this._user_id = "50cc682c16487d6c0b000004";
+//     this._account_id = "50cc682c16487d6c0b000003";
+//     cb();
+// };
 
 AccountMenusController.prototype.export = function () {
     var self = this,
         id = this._req.params['id'];
-    id = "50d8ae781d9ee8f213000004";
 
     Seq()
         .seq(function () {// find by id
             MenuModel.findById(id, this);
         })
+        .seq(function (menu) { // Validate menu account, fill out values
+            if (!menu) {
+                return this('menu_not_found');
+            }
+            if (menu.account_id != self._account_id) {
+                return this('invalid_menu');
+            }
+            this(null, menu);
+        })
         .par(function (menu) {
             CategoryModel.find({menu_id: menu._id}, this);
         })
-        // .par(function (menu) {
-            
-        // })
-        .seq(function (categories) {
-            var csv = new ExportCsv(categories, []);
+        .par(function (menu) {
+            MenuItemModel.find({menu_id: menu._id}, this);
+        })
+        .seq(function (categories, menu_items) {
+            var csv = new ExportCsv(categories, menu_items);
             csv.export(function (err, data) {
                 self._res.writeHead(200, {
                   'Content-Length': Buffer.byteLength(data),

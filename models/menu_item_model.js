@@ -33,7 +33,6 @@ MenuItemSchema.methods.setPrices = function (price_titles, prices) {
     var priceDoc, price;
     for (var title_id in prices) {
         price = prices[title_id] != "" ? parseFloat(prices[title_id]) : 0;
-        console.log('Price: ' + price);
 
         var title = price_titles.id(title_id);
         if (!title) {
