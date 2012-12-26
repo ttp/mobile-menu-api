@@ -6,6 +6,7 @@ function ExportCsvService(categories, menu_items) {
     this._tree = this._getTree(this._categories);
     this._menu_items = _.groupBy(menu_items, "category_id");
 }
+module.exports = ExportCsvService;
 
 ExportCsvService.prototype = {
     _getTree : function (categories) {
@@ -86,5 +87,3 @@ ExportCsvService.prototype = {
             });
     }
 };
-
-module.exports = ExportCsvService;

@@ -62,6 +62,7 @@ exports.initRoutes = function (server) {
 // Menus
     // Get
     server.get('/api/me/menus', map('account_menus#list'));
+    server.get('/api/me/menus/import', map('account_menus#import'));
     server.get('/api/me/menus/:id', map('account_menus#get'));
     server.get('/api/me/menus/:id/export', map('account_menus#export'));
 

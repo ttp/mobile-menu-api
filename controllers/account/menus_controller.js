@@ -3,6 +3,7 @@ var MenuModel = require('../../models/menu_model'),
     CategoryModel = require('../../models/category_model'),
     MenuItemModel = require('../../models/menu_item_model'),
     ExportCsv = require('../../models/export_csv'),
+    ImportCsv = require('../../models/import_csv'),
     AccountController = require("./account_controller"),
     Seq = require('seq');
 
@@ -105,11 +106,11 @@ AccountMenusController.prototype.del = function () {
         });
 };
 
-// AccountMenusController.prototype.before = function (cb) {
-//     this._user_id = "50cc682c16487d6c0b000004";
-//     this._account_id = "50cc682c16487d6c0b000003";
-//     cb();
-// };
+AccountMenusController.prototype.before = function (cb) {
+    this._user_id = "50cc682c16487d6c0b000004";
+    this._account_id = "50cc682c16487d6c0b000003";
+    cb();
+};
 
 AccountMenusController.prototype.export = function () {
     var self = this,
@@ -148,4 +149,20 @@ AccountMenusController.prototype.export = function () {
         .catch(function (err) {
             self.sendError(err);
         });
+}
+
+AccountMenusController.prototype.import = function () {
+    var csv_content = [
+        "category,dish_name,description,weight,price,price2,price3,price4",
+        "One,,,,Price,,,",
+        ",Dish1,dis1 desc,10/20/30,10,,,",
+        "Two,,,,,,,",
+        "  Three,,,,Price1,Price2,,",
+        ",dish2,dish2 desc,30/20/10,10,20,,",
+        "    Four,,,,Price Four,,,",
+        ",Four dish,four desc,1kg,100,,,"
+    ].join("\n");
+    var importService = new ImportCsv("123");
+    importService.import(csv_content);
+    this.sendSuccess();
 }
