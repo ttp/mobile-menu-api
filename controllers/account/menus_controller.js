@@ -152,6 +152,8 @@ AccountMenusController.prototype.export = function () {
 }
 
 AccountMenusController.prototype.import = function () {
+    var self = this;
+
     var csv_content = [
         "category,dish_name,description,weight,price,price2,price3,price4",
         "One,,,,Price,,,",
@@ -162,7 +164,51 @@ AccountMenusController.prototype.import = function () {
         "    Four,,,,Price Four,,,",
         ",Four dish,four desc,1kg,100,,,"
     ].join("\n");
-    var importService = new ImportCsv("123");
-    importService.import(csv_content);
-    this.sendSuccess();
+
+    var menu = new MenuModel({
+        account_id: this._account_id,
+        name: "Imported Menu"
+    });
+    var importService = new ImportCsv(menu);
+    importService.parse(csv_content);
+
+    Seq()
+        .seq(function () {// Save menu
+            menu.save(this);
+        })
+        .seq(function () {// Save categories
+            var parentSeq = this;
+            Seq(importService._categories)
+                .parEach(function (category) {
+                    category.save(this);
+                })
+                .seq(function () {
+                    parentSeq();
+                })
+                .catch(function (err) {
+                    parentSeq(err);
+                });
+        })
+        .seq(function () {// Save menu_items
+            var parentSeq = this;
+            Seq(importService._menu_items)
+                .parEach(function (menu_item) {
+                    menu_item.save(this);
+                })
+                .seq(function () {
+                    parentSeq();
+                })
+                .catch(function (err) {
+                    parentSeq(err);
+                });
+        })
+        .seq(function () {
+            self._res.json({
+                success: true,
+                menu: menu
+            });
+        })
+        .catch(function (err) {
+            self.sendError(err);
+        });
 }

@@ -56,5 +56,13 @@ MenuItemSchema.methods.setPrices = function (price_titles, prices) {
     }
 }
 
+MenuItemSchema.methods.setCategory = function (category) {
+    var categories = category.parent_id ? category.parents : [];
+    categories.push(category.id);
+    
+    this.category_id = category.id;
+    this.categories = categories;
+}
+
 var MenuItemModel = mongoose.model('menu_item', MenuItemSchema);
 module.exports = MenuItemModel;
