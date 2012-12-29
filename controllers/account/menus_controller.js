@@ -106,11 +106,11 @@ AccountMenusController.prototype.del = function () {
         });
 };
 
-AccountMenusController.prototype.before = function (cb) {
-    this._user_id = "50cc682c16487d6c0b000004";
-    this._account_id = "50cc682c16487d6c0b000003";
-    cb();
-};
+// AccountMenusController.prototype.before = function (cb) {
+//     this._user_id = "50cc682c16487d6c0b000004";
+//     this._account_id = "50cc682c16487d6c0b000003";
+//     cb();
+// };
 
 AccountMenusController.prototype.export = function () {
     var self = this,
