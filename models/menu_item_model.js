@@ -57,7 +57,7 @@ MenuItemSchema.methods.setPrices = function (price_titles, prices) {
 }
 
 MenuItemSchema.methods.setCategory = function (category) {
-    var categories = category.parent_id ? category.parents : [];
+    var categories = category.parent_id ? category.parents.slice() : [];
     categories.push(category.id);
     
     this.category_id = category.id;

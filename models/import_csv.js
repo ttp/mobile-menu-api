@@ -1,6 +1,5 @@
 var MenuItemModel = require('./menu_item_model'),
     CategoryModel = require('./category_model'),
-    _ = require("underscore"),
     csv = require("csv");
 
 function ImportCsvService (menu) {
@@ -64,8 +63,8 @@ ImportCsvService.prototype = {
             })
             .on('end', function () {
                 console.log('done');
-                console.log(self._categories);
-                console.log(self._menu_items);
+                // console.log(self._categories);
+                // console.log(self._menu_items);
             });
     },
 
