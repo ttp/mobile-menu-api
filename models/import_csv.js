@@ -48,13 +48,14 @@ ImportCsvService.prototype = {
                     return;// next
                 }
                 if (row.category) { // Insert category
-                    indent = self._categoryIndentaton(row);
+                    var indent = self._categoryIndentaton(row);
                     if (indent > prev_indent) {
                         self._parents.push(prev_category);
                     } else if (indent < prev_indent) {
                         self._parents.pop();
                     }
                     category = self.createCategory(row);
+                    prev_indent = indent;
                     prev_category = category;
                     return;// next
                 } else if (row.dish_name) {// Insert menu item

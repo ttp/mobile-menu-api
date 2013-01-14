@@ -154,20 +154,11 @@ AccountMenusController.prototype.export = function () {
 AccountMenusController.prototype.import = function () {
     var self = this;
 
-    var csv_content = [
-        "category,dish_name,description,weight,price,price2,price3,price4",
-        "One,,,,Price,,,",
-        ",Dish1,dis1 desc,10/20/30,10,,,",
-        "Two,,,,,,,",
-        "  Three,,,,Price1,Price2,,",
-        ",dish2,dish2 desc,30/20/10,10,20,,",
-        "    Four,,,,Price Four,,,",
-        ",Four dish,four desc,1kg,100,,,"
-    ].join("\n");
+    var csv_content = this._req.params['content'];
 
     var menu = new MenuModel({
         account_id: this._account_id,
-        name: "Imported Menu"
+        name: this._req.params['name']
     });
     var importService = new ImportCsv(menu);
     importService.parse(csv_content);
