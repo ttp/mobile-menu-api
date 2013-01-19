@@ -89,10 +89,16 @@ ImportCsvService.prototype = {
             name: row.dish_name
         });
         menu_item.setCategory(category);
+
+        var price_regexp = /^\d+\.?\d*$/,
+            price_str,
+            price;
         category.price_titles.forEach(function (item, index) {
+            price_str = (row[this._getPriceKey(index)] + "").trim();
+            price = price_regexp.test(price_str) ? parseFloat(price_str) : 0;
             menu_item.prices.push({
                 price_title_id: item.id,
-                price: parseFloat(row[this._getPriceKey(index)] || 0)
+                price: price
             });
         }, this);
         this._menu_items.push(menu_item);
