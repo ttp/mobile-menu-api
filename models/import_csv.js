@@ -63,9 +63,7 @@ ImportCsvService.prototype = {
                 }
             })
             .on('end', function () {
-                console.log('done');
-                // console.log(self._categories);
-                // console.log(self._menu_items);
+                console.log('csv parsing done');
             });
     },
 
@@ -103,10 +101,6 @@ ImportCsvService.prototype = {
         }, this);
         this._menu_items.push(menu_item);
         return menu_item;
-    },
-
-    save : function () {
-
     },
 
     getParent : function () {
