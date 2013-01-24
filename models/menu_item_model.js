@@ -33,7 +33,6 @@ MenuItemSchema.methods.setPrices = function (price_titles, prices) {
     var priceDoc, price;
     for (var title_id in prices) {
         price = prices[title_id] != "" ? parseFloat(prices[title_id]) : 0;
-        console.log('Price: ' + price);
 
         var title = price_titles.id(title_id);
         if (!title) {
@@ -55,6 +54,14 @@ MenuItemSchema.methods.setPrices = function (price_titles, prices) {
             });
         }
     }
+}
+
+MenuItemSchema.methods.setCategory = function (category) {
+    var categories = category.parent_id ? category.parents.slice() : [];
+    categories.push(category.id);
+    
+    this.category_id = category.id;
+    this.categories = categories;
 }
 
 var MenuItemModel = mongoose.model('menu_item', MenuItemSchema);

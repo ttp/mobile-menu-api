@@ -68,7 +68,7 @@ CategorySchema.methods.setParent = function (parentCategory) {
         this.parents = null;
     } else {
         this.parent_id = parentCategory.id;
-        var parents = parentCategory.parents ? parentCategory.parents : [];
+        var parents = parentCategory.parents ? parentCategory.parents.slice() : [];
         parents.push(this.parent_id);
         this.parents = parents;
     }
