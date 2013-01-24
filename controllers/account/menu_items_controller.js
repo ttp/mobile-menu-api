@@ -141,13 +141,10 @@ AccountMenuItemsController.prototype.save = function () {
             }
 
             if (!menu_item) {
-                var categories = category.parent_id ? category.parents : [];
-                categories.push(category.id);
                 menu_item = new MenuItemModel({
-                    menu_id: menu.id,
-                    category_id: category.id,
-                    categories: categories
+                    menu_id: menu.id
                 });
+                menu_item.setCategory(category);
             }
 
             self._fields.forEach(function (field) {
