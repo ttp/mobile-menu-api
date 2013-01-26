@@ -28,7 +28,7 @@ ImportCsvService.prototype = {
         return row.category.length - row.category.replace(/^ */, '').length;
     },
 
-    parse : function (csv_content) {
+    parse : function (csv_content, callback) {
         var self = this;
         
         this._categories = [];
@@ -64,6 +64,7 @@ ImportCsvService.prototype = {
             })
             .on('end', function () {
                 console.log('csv parsing done');
+                callback();
             });
     },
 

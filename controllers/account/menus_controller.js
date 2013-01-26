@@ -155,9 +155,11 @@ AccountMenusController.prototype.import = function () {
         name: this._req.params['name']
     });
     var importService = new ImportCsv(menu);
-    importService.parse(csv_content);
 
     Seq()
+        .seq(function () {
+            importService.parse(csv_content, this);
+        })
         .seq(function () {// Save menu
             menu.save(this);
         })
