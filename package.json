@@ -6,7 +6,9 @@
         "memcached": "*",
         "mongoose": "*",
         "seq": "*",
-        "hat": "*"
+        "hat": "*",
+        "underscore": "*",
+        "csv": "*"
     },
 
     "devDependencies" : {
