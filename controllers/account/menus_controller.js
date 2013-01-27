@@ -92,11 +92,24 @@ AccountMenusController.prototype.del = function () {
             MenuModel.findById(id, this);
         })
         .parEach(function (menu) {// validate account and remove
-            if (menu && menu.account_id == self._account_id) {
-                menu.remove(this);
-            } else {
-                this();
-            };
+            if (!menu || menu.account_id != self._account_id) {
+                return this('invalid_menu');
+            }
+
+            var parentSeq = this;
+            Seq()
+                .par(function () {
+                    menu.removeCategories(this);
+                })
+                .par(function () {
+                    menu.removeMenuItems(this);
+                })
+                .seq(function () {
+                    menu.remove(parentSeq);
+                })
+                .catch(function (err) {
+                    parentSeq(err);
+                });
         })
         .seq(function () { // send succes message
             self.sendSuccess();
