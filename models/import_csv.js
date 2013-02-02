@@ -4,6 +4,7 @@ var MenuItemModel = require('./menu_item_model'),
 
 function ImportCsvService (menu) {
     this._menu = menu;
+    this._menu_item_fields = ["description", "weight"];
 }
 module.exports = ImportCsvService;
 
@@ -86,6 +87,11 @@ ImportCsvService.prototype = {
         var menu_item = new MenuItemModel({
             menu_id: this._menu._id,
             name: row.dish_name
+        });
+        this._menu_item_fields.forEach(function (field) {
+            if (row[field]) {
+                menu_item[field] = row[field];
+            }
         });
         menu_item.setCategory(category);
 
