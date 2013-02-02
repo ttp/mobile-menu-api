@@ -1,7 +1,7 @@
 function GridModel (options) {
     this._options = options;
     this._model = this._options.model;
-    this._conditions = this._options.conditions;
+    this._conditions = this._options.conditions || {};
     
     this.DEFAULT_LIMIT = 10;
     this.MAX_LIMIT = 100;
@@ -14,8 +14,8 @@ GridModel.prototype = {
     },
 
     rows : function (cb) {
-        var sortable_cols = this._options['sortable_cols'],
-            params = this._options['params'],
+        var sortable_cols = this._options['sortable_cols'] || {},
+            params = this._options['params'] || {},
             directions = {'ASC': "", 'DESC': "-"};
         
         var select = this._model.find(this._conditions);
@@ -50,6 +50,7 @@ GridModel.prototype = {
     },
 
     count : function (cb) {
+        console.log(this._conditions);
         this._model.count(this._conditions, cb);
     }
 }

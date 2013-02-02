@@ -6,6 +6,14 @@ function ApiController (options) {
 }
 module.exports = ApiController;
 
+ApiController.prototype.hasParam = function (param) {
+    return this._req.params.hasOwnProperty(param);
+};
+
+ApiController.prototype.getParam = function (param) {
+    return this._req.params[param];
+};
+
 ApiController.prototype.requireUser = function () {
     if (this._req.session.user == undefined) {
         this._res.redirect('/');

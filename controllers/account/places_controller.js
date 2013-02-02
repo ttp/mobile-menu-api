@@ -39,6 +39,29 @@ AccountPlacesController.prototype.list = function () {
         });
 };
 
+AccountPlacesController.prototype.count = function () {
+    var res = this._res;
+
+    var gridModel = new GridModel({
+        model: PlaceModel,
+        conditions: {"account_id": this._account_id}
+    });
+    if (this.hasParam('verified')) {
+        gridModel.setCondition('verified', this.getParam('verified') == 'true');
+    }
+    Seq()
+        .seq(function () {
+            gridModel.count(this);
+        })
+        .seq(function (cnt) {
+            res.send({
+                count: cnt
+            });
+        }).catch(function (err) {
+            res.json({error: err});
+        });
+};
+
 AccountPlacesController.prototype.get = function () {
     PlaceModel.findOne({'_id': this._req.params['id']}, null, null, this._getCallback.bind(this));
 };

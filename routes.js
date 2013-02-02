@@ -51,6 +51,7 @@ exports.initRoutes = function (server) {
 // Places
     // Get
     server.get('/api/me/places', map('account_places#list'));
+    server.get('/api/me/places/count', map('account_places#count'));
     server.get('/api/me/places/:id', map('account_places#get'));
     // Create/Update
     server.post('/api/me/places', map('account_places#save'));
