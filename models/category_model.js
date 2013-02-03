@@ -1,6 +1,7 @@
 var mongoose = require('mongoose'),
     MenuItemModel = require('./menu_item_model'),
-    ObjectId = mongoose.Schema.Types.ObjectId;
+    ObjectId = mongoose.Schema.Types.ObjectId,
+    _ = require("underscore");
 
 var PriceTitleSchema = new mongoose.Schema({
     title: String,
@@ -38,6 +39,8 @@ function getTree(menu_id, parent_id, cb) {
 function getFlattenTree(menu_id, cb) {
     var tree = {'0': []};
     CategoryModel.find({menu_id: menu_id}, function (err, rows) {
+        rows = _.sortBy(rows, 'name');
+        
         rows.forEach(function (row) {
             var parent_id = row.parent_id ? row.parent_id : '0';
             if (!tree[parent_id]) {
