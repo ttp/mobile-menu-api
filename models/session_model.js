@@ -4,15 +4,16 @@ var db = require('../db'),
 var SessionSchema = new db.mongoose.Schema({
     token: String,
     data: String,
-    updated: Number
+    updated: {type: Date, default: Date.now}
 });
 SessionSchema.set('autoIndex', false);
 SessionSchema.index({ token: 1 });
 
-var SessionModel = db.mongoose.model('session', SessionSchema);
-
 var EXPIRE_SECONDS = 3600, // 1 hour
     UPDATE_TIMEOUT = 600; // each 10 min
+SessionSchema.index({ updated: 1 }, { expireAfterSeconds: EXPIRE_SECONDS } );
+
+var SessionModel = db.mongoose.model('session', SessionSchema);
 
 function getTimestamp () {
     return parseInt(Date.now() / 1000);
@@ -27,8 +28,7 @@ var Session = {
             .par(function () {
                 SessionModel.create({
                     token: token,
-                    data: JSON.stringify(data),
-                    updated: data.timestamp
+                    data: JSON.stringify(data)
                 }, this);
             })
             .par(function () {
@@ -82,7 +82,7 @@ var Session = {
 
     renew : function (token, data) {
         data.timestamp = getTimestamp();
-        SessionModel.update({token: token},{ $set: { updated: data.timestamp } }).exec();
+        SessionModel.update({token: token},{ $set: { updated: Date.now() } }).exec();
         db.memcached.set(token, data, EXPIRE_SECONDS, function () {});
     },
 
